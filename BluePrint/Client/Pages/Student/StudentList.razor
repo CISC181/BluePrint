@@ -1,0 +1,56 @@
+﻿@page "/students"
+
+<h3>Projects</h3>
+
+<div style="position: relative; width:100%; min-height: 600px;">
+
+    <TelerikLoaderContainer OverlayThemeColor="light"
+                            Visible="@(IsLoading)"
+                            Text="@null" Class="initial-data-loader">
+        <Template>
+            <TelerikLoader Type="@LoaderType.InfiniteSpinner" Size="@LoaderSize.Large"></TelerikLoader>
+        </Template>
+    </TelerikLoaderContainer>
+
+    <TelerikGrid Data="@Students"
+                 Height="650px"
+                 Pageable="true"
+                 Sortable="true"
+                 Groupable="false"
+                 PageSize="20"
+                 FilterMode="Telerik.Blazor.GridFilterMode.FilterMenu"
+                 Resizable="true" Reorderable="true"
+                 OnRead=@ReadItems
+                 TotalCount=@Total
+                 OnCreate=@CreateItem
+                 OnUpdate="@UpdateItem"
+                 OnDelete="@DeleteItem"
+                 ConfirmDelete="true">
+        <GridToolBar>
+            <GridCommandButton Command="Add" Icon="add">Add Project</GridCommandButton>
+            <GridCommandButton Command="ExcelExport" Icon="file-excel">Export to Excel</GridCommandButton>
+            <label class="k-checkbox-label"><TelerikCheckBox @bind-Value="@ExportAllPages" />Export All Pages</label>
+        </GridToolBar>
+
+        <GridExport>
+            <GridExcelExport FileName="projects-export" AllPages="@ExportAllPages" />
+        </GridExport>
+
+        <GridColumns>
+            <GridColumn Field="@(nameof(StudentDto.StudentId))" Width="0px" Editable="false" Visible="false" Title="StudentID" />
+            <GridColumn Field="@(nameof(StudentDto.FirstName))" Width="200px" Editable="true" Visible="true" Title="First Name" />
+            <GridColumn Field="@(nameof(StudentDto.LastName))" Width="200px" Editable="true" Visible="true" Title="Last Name" />
+            <GridColumn Field="@(nameof(StudentDto.Phone))" Width="200px" Editable="true" Visible="true" Title="Phone" />
+
+            <GridCommandColumn Width="250px">
+                <GridCommandButton Command="Edit" Icon="edit">Edit</GridCommandButton>
+                <GridCommandButton Command="Delete" Icon="delete">Delete</GridCommandButton>
+                <GridCommandButton Command="Save" Icon="save" ShowInEdit="true">Save</GridCommandButton>
+                <GridCommandButton Command="Cancel" Icon="cancel" ShowInEdit="true">Cancel</GridCommandButton>
+
+                <GridCommandButton Command="Detail" Icon="form-element" ShowInEdit="false" OnClick="@Detail">Detail</GridCommandButton>
+            </GridCommandColumn>
+
+        </GridColumns>
+    </TelerikGrid>
+</div>

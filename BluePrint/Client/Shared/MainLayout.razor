@@ -1,0 +1,85 @@
+﻿@layout TelerikLayout
+@inherits LayoutComponentBase
+
+<style>
+    /* the size of the containers will fill up their parents up to the viewport */
+    .k-drawer-container, .k-drawer-content {
+        width: 100%;
+        height: 100vh;
+    }
+    /* vertical scroll should happen in the main portion of the content - where the Body is
+        This keeps the header sticky at the top
+        */
+    .main {
+        overflow-y: auto;
+    }
+    /* horizontal scroll happens in the drawer content to keep the drawer on the left side of the screen */
+    .k-drawer-content {
+        overflow-x: auto;
+    }
+    /* sizing of the header */
+    .top-row {
+        left: 0;
+    }
+    /* expand-collapse button for the drawer - position above the header */
+    .drawer-hamburger {
+        position: absolute;
+        z-index: 2;
+    }
+
+    .footer {
+        background-color: #f7f7f7;
+        position: absolute;
+        font-size: 0.75em;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2.5em;
+        width: auto;
+        display: flex;
+        justify-content: left;
+        align-items: center;
+    }
+</style>
+
+<TelerikDrawer Data="@NavigablePages"
+               MiniMode="true"
+               Mode="@DrawerMode.Push"
+               @ref="@DrawerRef"
+               @bind-SelectedItem="@SelectedItem">
+
+    <ItemTemplate Context="item">
+        <span class="k-icon k-i-@item.Icon" title="@item.Title"></span>
+        <span class="k-item-text">@item.Text</span>
+    </ItemTemplate>
+
+    <Content>
+        <div class="main position-relative vh-100">
+            <TelerikButton OnClick="@(() => DrawerRef.ToggleAsync())" Icon="menu" Class="drawer-hamburger"></TelerikButton>
+
+            <div class="top-row px-4 auth">
+                <div><img src="United_States_Department_of_State.svg" width="80" height="80" /></div>
+                <div class="ms-1" style="font-weight:bold;">
+                    <p class="m-0">Office of the U.S. Speaker Program</p>
+                    <p class="m-0">Bureau of Educational and Cultural Affairs</p>
+                    <p class="m-0">U.S. Department of State</p>
+                </div>
+                <div class="position-absolute top-50 start-50 translate-middle">
+                    <h2>@TopBarTitle</h2>
+                </div>
+                <div class="ms-auto">
+                    <LoginDisplay />
+                    <a href="http://blazor.net" target="_blank">About</a>
+                </div>
+            </div>
+
+            <div class="content px-4">
+                @Body
+            </div>
+
+            <div class="footer align-middle">
+                <span>@BuildNumner</span>
+            </div>
+        </div>
+    </Content>
+</TelerikDrawer>
