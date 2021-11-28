@@ -70,6 +70,7 @@ namespace BluePrint.Server.Controllers
                     ModifiedDate = sp.ModifiedDate,
                     RegistrationDate = sp.RegistrationDate,
                     Salutation = sp.Salutation,
+                    StreetAddress = sp.StreetAddress,
                     Zip = sp.Zip
                 }).ToListAsync();
             DataSourceResult processedData = await students.ToDataSourceResultAsync(gridRequest);

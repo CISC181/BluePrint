@@ -1,0 +1,1 @@
+﻿Scaffold-DbContext "Data Source=WILMA;User ID=STU;Password=Circuit00" Oracle.EntityFrameworkCore -ContextNamespace BluePrint.EF -Namespace BluePrint.Shared.Models -OutputDir ../Shared/Models -ContextDir Data -Project "BluePrint.EF" -Context "BluePrintOracleContext" -DataAnnotations -NoOnConfiguring -Force 

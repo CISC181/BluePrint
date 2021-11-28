@@ -18,7 +18,6 @@ namespace BluePrint.EF
         {
         }
 
-        public virtual DbSet<Address> Addresses { get; set; }
         public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<Enrollment> Enrollments { get; set; }
         public virtual DbSet<Grade> Grades { get; set; }
@@ -28,20 +27,12 @@ namespace BluePrint.EF
         public virtual DbSet<Instructor> Instructors { get; set; }
         public virtual DbSet<Section> Sections { get; set; }
         public virtual DbSet<Student> Students { get; set; }
-        public virtual DbSet<VStudentFinalGrade> VStudentFinalGrades { get; set; }
-        public virtual DbSet<Video> Videos { get; set; }
-        public virtual DbSet<Warehouse> Warehouses { get; set; }
         public virtual DbSet<Zipcode> Zipcodes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("STU")
                 .HasAnnotation("Relational:Collation", "USING_NLS_COMP");
-
-            modelBuilder.Entity<Address>(entity =>
-            {
-                entity.Property(e => e.AddressId).ValueGeneratedOnAdd();
-            });
 
             modelBuilder.Entity<Course>(entity =>
             {
@@ -356,32 +347,6 @@ namespace BluePrint.EF
                     .HasConstraintName("STU_ZIP_FK");
             });
 
-            modelBuilder.Entity<VStudentFinalGrade>(entity =>
-            {
-                entity.ToView("V_STUDENT_FINAL_GRADE");
-
-                entity.Property(e => e.SectionId).HasPrecision(8);
-
-                entity.Property(e => e.StudentId).HasPrecision(8);
-            });
-
-            modelBuilder.Entity<Video>(entity =>
-            {
-                entity.Property(e => e.VideoId).ValueGeneratedOnAdd();
-
-                entity.Property(e => e.ActiveFlg)
-                    .IsUnicode(false)
-                    .ValueGeneratedOnAdd()
-                    .IsFixedLength(true);
-
-                entity.Property(e => e.Price).ValueGeneratedOnAdd();
-            });
-
-            modelBuilder.Entity<Warehouse>(entity =>
-            {
-                entity.Property(e => e.WarehouseName).IsUnicode(false);
-            });
-
             modelBuilder.Entity<Zipcode>(entity =>
             {
                 entity.HasKey(e => e.Zip)
@@ -406,19 +371,13 @@ namespace BluePrint.EF
                 entity.Property(e => e.State).IsUnicode(false);
             });
 
-            modelBuilder.HasSequence("ADDRESS_SEQ");
-
             modelBuilder.HasSequence("COURSE_NO_SEQ");
 
             modelBuilder.HasSequence("INSTRUCTOR_ID_SEQ");
 
-            modelBuilder.HasSequence("PEOPLE_OBJ_S");
-
             modelBuilder.HasSequence("SECTION_ID_SEQ");
 
             modelBuilder.HasSequence("STUDENT_ID_SEQ");
-
-            modelBuilder.HasSequence("VIDEO_SEQ");
 
             OnModelCreatingPartial(modelBuilder);
         }
