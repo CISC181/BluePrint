@@ -25,6 +25,7 @@ namespace BluePrint.EF
         public virtual DbSet<GradeType> GradeTypes { get; set; }
         public virtual DbSet<GradeTypeWeight> GradeTypeWeights { get; set; }
         public virtual DbSet<Instructor> Instructors { get; set; }
+        public virtual DbSet<Salutation> Salutations { get; set; }
         public virtual DbSet<Section> Sections { get; set; }
         public virtual DbSet<Student> Students { get; set; }
         public virtual DbSet<Zipcode> Zipcodes { get; set; }
@@ -271,6 +272,13 @@ namespace BluePrint.EF
                     .HasConstraintName("INST_ZIP_FK");
             });
 
+            modelBuilder.Entity<Salutation>(entity =>
+            {
+                entity.Property(e => e.SalutationId).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Salutation1).IsUnicode(false);
+            });
+
             modelBuilder.Entity<Section>(entity =>
             {
                 entity.Property(e => e.SectionId).HasPrecision(8);
@@ -314,9 +322,7 @@ namespace BluePrint.EF
             {
                 entity.Property(e => e.StudentId).HasPrecision(8);
 
-                entity.Property(e => e.CreatedBy)
-                    .IsUnicode(false)
-                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.CreatedBy).IsUnicode(false);
 
                 entity.Property(e => e.CreatedDate).ValueGeneratedOnAdd();
 
@@ -334,11 +340,16 @@ namespace BluePrint.EF
 
                 entity.Property(e => e.Phone).IsUnicode(false);
 
-                entity.Property(e => e.Salutation).IsUnicode(false);
+                entity.Property(e => e.SalutationId).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.StreetAddress).IsUnicode(false);
 
                 entity.Property(e => e.Zip).IsUnicode(false);
+
+                entity.HasOne(d => d.Salutation)
+                    .WithMany(p => p.Students)
+                    .HasForeignKey(d => d.SalutationId)
+                    .HasConstraintName("SYS_C0030890");
 
                 entity.HasOne(d => d.ZipNavigation)
                     .WithMany(p => p.Students)
@@ -376,6 +387,8 @@ namespace BluePrint.EF
             modelBuilder.HasSequence("INSTRUCTOR_ID_SEQ");
 
             modelBuilder.HasSequence("SECTION_ID_SEQ");
+
+            modelBuilder.HasSequence("SEQ_SALUTATION");
 
             modelBuilder.HasSequence("STUDENT_ID_SEQ");
 

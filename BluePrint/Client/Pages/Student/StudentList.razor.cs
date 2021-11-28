@@ -30,6 +30,9 @@ namespace BluePrint.Client.Pages.Student
         StudentService StudentService { get; set; }
 
         private IEnumerable<StudentDto> Students { get; set; }
+        private IEnumerable<Salutation> salutations { get; set; }
+
+        public StudentDto StudentToEdit { get; set; }
 
         //private SPARC.Shared.Models.Prjct CurrentlyEditedProject { get; set; }
         private bool IsLoading { get; set; }
@@ -38,11 +41,15 @@ namespace BluePrint.Client.Pages.Student
 
         protected override async Task OnInitializedAsync()
         {
-            //await GetProjects();
-            //await GetProjectTypes();
+            await GetSalutations();
             await base.OnInitializedAsync();
-        }
 
+        }
+        public class WindowDimension
+        {
+            public int Width { get; set; }
+            public int Height { get; set; }
+        }
         private async Task GetStudents()
         {
             IsLoading = true;
@@ -55,16 +62,16 @@ namespace BluePrint.Client.Pages.Student
             IsLoading = false;
         }
 
-        //private async Task GetProjectTypes()
-        //{
-        //    var options = new JsonSerializerOptions()
-        //    {
-        //        ReferenceHandler = ReferenceHandler.Preserve,
-        //        PropertyNameCaseInsensitive = true
-        //    };
+        private async Task GetSalutations()
+        {
+            var options = new JsonSerializerOptions()
+            {
+                ReferenceHandler = ReferenceHandler.Preserve,
+                PropertyNameCaseInsensitive = true
+            };
 
-        //    ProjectTypes = await Http.GetFromJsonAsync<IEnumerable<SPARC.Shared.Models.PrjctType>>("api/project/projecttypes", options);
-        //}
+            salutations = await Http.GetFromJsonAsync<IEnumerable<BluePrint.Shared.Models.Salutation>>("api/student/salutations", options);
+        }
 
         protected async Task ReadItems(GridReadEventArgs args)
         {

@@ -9,7 +9,7 @@ namespace BluePrint.Shared.DTO
     public class StudentDto
     {
         public int StudentId { get; set; }
-        public string Salutation { get; set; }
+        public decimal? SalutationId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string StreetAddress { get; set; }
@@ -23,5 +23,6 @@ namespace BluePrint.Shared.DTO
         public DateTime ModifiedDate { get; set; }
         public string City { get; set; }
         public string State { get; set; }
+        public String Salutation { get; set; }
     }
 }

@@ -20,9 +20,6 @@ namespace BluePrint.Shared.Models
         [Key]
         [Column("STUDENT_ID")]
         public int StudentId { get; set; }
-        [Column("SALUTATION")]
-        [StringLength(5)]
-        public string Salutation { get; set; }
         [Column("FIRST_NAME")]
         [StringLength(25)]
         public string FirstName { get; set; }
@@ -57,7 +54,12 @@ namespace BluePrint.Shared.Models
         public string ModifiedBy { get; set; }
         [Column("MODIFIED_DATE", TypeName = "DATE")]
         public DateTime ModifiedDate { get; set; }
+        [Column("SALUTATION_ID", TypeName = "NUMBER")]
+        public decimal? SalutationId { get; set; }
 
+        [ForeignKey(nameof(SalutationId))]
+        [InverseProperty("Students")]
+        public virtual Salutation Salutation { get; set; }
         [ForeignKey(nameof(Zip))]
         [InverseProperty(nameof(Zipcode.Students))]
         public virtual Zipcode ZipNavigation { get; set; }

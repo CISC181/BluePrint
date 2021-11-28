@@ -66,7 +66,7 @@ namespace BluePrint.UT.UT
             stu.FirstName = "Bert";
             stu.LastName = "Gibbons";
             stu.Phone = "555-1212";
-            stu.Salutation = "Mr.";
+            stu.SalutationId = 1;
             stu.StreetAddress = "123 Easy way";
             stu.Zip = "07024";
             _context.Add(stu);

@@ -34,9 +34,18 @@ namespace BluePrint.Server.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(StudentDto speaker)
         {
-            var sdnt = await _context.Students.SingleAsync(s => s.StudentId == speaker.StudentId);
-            _context.Entry(sdnt).CurrentValues.SetValues(speaker);
-            await _context.SaveChangesAsync();
+            var trans = _context.Database.BeginTransaction();
+            try
+            {
+                var sdnt = await _context.Students.SingleAsync(s => s.StudentId == speaker.StudentId);
+                _context.Entry(sdnt).CurrentValues.SetValues(speaker);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                trans.Rollback();
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
             return NoContent();
         }
 
@@ -50,13 +59,25 @@ namespace BluePrint.Server.Controllers
         //    return NoContent();
         //}
 
+        [HttpGet]
+        [Route("salutations")]
+        public async Task<IActionResult> GetSalutations()
+        {
+            var lstSalutations = await _context.Salutations.ToListAsync();
+            return Ok(lstSalutations);
+        }
+
         [HttpPost]
         [Route("GetStudentData")]
         public async Task<DataEnvelope<StudentDto>> Post([FromBody] DataSourceRequest gridRequest)
         {
             DataEnvelope<StudentDto> dataToReturn = null;
 
-            ICollection<StudentDto> students = await _context.Students
+            //ICollection<Student> studentsEF = await _context.Students.Include(x => x.Salutation).ToListAsync();
+            
+            //var speakerDTO = _mapper.Map<StudentDto>(studentsEF);
+
+            ICollection<StudentDto> students = await _context.Students.Include(x=>x.Salutation)
                 .Select(sp => new StudentDto
                 {
                     StudentId = sp.StudentId,
@@ -69,7 +90,8 @@ namespace BluePrint.Server.Controllers
                     ModifiedBy = sp.ModifiedBy,
                     ModifiedDate = sp.ModifiedDate,
                     RegistrationDate = sp.RegistrationDate,
-                    Salutation = sp.Salutation,
+                    SalutationId = sp.SalutationId,
+                    Salutation = sp.Salutation.Salutation1,
                     StreetAddress = sp.StreetAddress,
                     Zip = sp.Zip
                 }).ToListAsync();

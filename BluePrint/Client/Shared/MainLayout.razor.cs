@@ -18,7 +18,7 @@ namespace BluePrint.Client.Shared
         {
             new DrawerItem { Text = "Home", Title="Home", Url = "/", Icon = "home" },
             new DrawerItem { IsSeparator = true, Url = string.Empty  },
-            new DrawerItem { Text = "Students", Title="Students", Url = "Students", Icon = "clipboard" },
+            new DrawerItem { Text = "Students", Title="Students", Url = "Students", Icon = "user" },
             new DrawerItem { Text = "Post Accounting", Title="Post Accounting", Url = "postaccounting", Icon = "dollar" },
             new DrawerItem { Text = "Transfers", Title="Transfers", Url = "transfers", Icon = "arrows-swap" },
             new DrawerItem { Text = "Speakers", Title="Speakers", Url = "speakers", Icon = "myspace" },
