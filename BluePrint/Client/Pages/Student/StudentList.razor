@@ -12,101 +12,115 @@
         </Template>
     </TelerikLoaderContainer>
 
+    <TelerikGrid Data="@Students"
+                 Height="650px"
+                 Pageable="true"
+                 Sortable="true"
+                 Groupable="false"
+                 PageSize="20"
+                 FilterMode="Telerik.Blazor.GridFilterMode.FilterMenu"
+                 Resizable="true" Reorderable="true"
+                 OnRead=@ReadItems
+                 TotalCount=@Total
+                 OnCreate=@CreateItem
+                 OnUpdate="@UpdateItem"
+                 OnDelete="@DeleteItem"
+                 ConfirmDelete="true">
+        <GridToolBar>
+            <GridCommandButton Command="Add" Icon="add">Add Student</GridCommandButton>
+            <GridCommandButton Command="ExcelExport" Icon="file-excel">Export to Excel</GridCommandButton>
+            <label class="k-checkbox-label"><TelerikCheckBox @bind-Value="@ExportAllPages" />Export All Pages</label>
+        </GridToolBar>
+
+        <GridExport>
+            <GridExcelExport FileName="projects-export" AllPages="@ExportAllPages" />
+        </GridExport>
+
+        <GridColumns>
+            <GridColumn Field="@(nameof(StudentDto.StudentId))" Width="0px" Editable="false" Visible="false" Title="StudentID" />
 
 
-    <TelerikSplitter Width="1200px"
-                     Height="800px"
-                     Orientation="@SplitterOrientation.Horizontal">
-        <SplitterPanes>
-            <SplitterPane Class="k-pane-flex" Size="20%" Min="20%" Max="40%" Collapsible="false">
+            <GridColumn Field=@nameof(StudentDto.Salutation) Title="Salutation" Width="50px">
+                <EditorTemplate>
+                    @{
+                        StudentToEdit = context as StudentDto;
 
-            </SplitterPane>
+                        <TelerikDropDownList Data="@salutations" @bind-Value="@StudentToEdit.SalutationId"
+                                             Width="170px"
+                                             TextField="Salutation1"
+                                             ValueField="SalutationId">
+                        </TelerikDropDownList>
+                    }
+                </EditorTemplate>
+            </GridColumn>
 
-            <SplitterPane Min="60%">
-                <TelerikGrid Data="@Students"
-                             Height="650px"
-                             Pageable="true"
-                             Sortable="true"
-                             Groupable="false"
-                             PageSize="20"
-                             FilterMode="Telerik.Blazor.GridFilterMode.FilterMenu"
-                             Resizable="true" Reorderable="true"
-                             OnRead=@ReadItems
-                             TotalCount=@Total
-                             OnCreate=@CreateItem
-                             OnUpdate="@UpdateItem"
-                             OnDelete="@DeleteItem"
-                             ConfirmDelete="true">
-                    <GridToolBar>
-                        <GridCommandButton Command="Add" Icon="add">Add Student</GridCommandButton>
-                        <GridCommandButton Command="ExcelExport" Icon="file-excel">Export to Excel</GridCommandButton>
-                        <label class="k-checkbox-label"><TelerikCheckBox @bind-Value="@ExportAllPages" />Export All Pages</label>
-                    </GridToolBar>
+            <GridColumn Field="@(nameof(StudentDto.FirstName))" Width="100px" Editable="true" Visible="true" Title="First Name" />
+            <GridColumn Field="@(nameof(StudentDto.LastName))" Width="100px" Editable="true" Visible="true" Title="Last Name" />
+            <GridColumn Field="@(nameof(StudentDto.StreetAddress))" Width="100px" Editable="true" Visible="true" Title="Street Address" />
+            <GridColumn Field="@(nameof(StudentDto.Zip))" Width="75px" Editable="true" Visible="true" Title="Zip" />
+            <GridColumn Field="@(nameof(StudentDto.Phone))" Width="75px" Editable="true" Visible="true" Title="Phone" />
+            <GridColumn Field="@(nameof(StudentDto.Employer))" Width="75px" Editable="true" Visible="true" Title="Employer" />
 
-                    <GridExport>
-                        <GridExcelExport FileName="projects-export" AllPages="@ExportAllPages" />
-                    </GridExport>
+            <GridColumn Field="@(nameof(StudentDto.RegistrationDate))" DisplayFormat="{0:MM/dd/yyyy}" Width="75px" Editable="true" Visible="true" Title="Registration Date" />
 
-                    <GridColumns>
-                        <GridColumn Field="@(nameof(StudentDto.StudentId))" Width="0px" Editable="false" Visible="false" Title="StudentID" />
+            <GridCommandColumn Width="250px">
+                <GridCommandButton Command="Edit" Icon="edit">Edit</GridCommandButton>
+                <GridCommandButton Command="Delete" Icon="delete">Delete</GridCommandButton>
+                <GridCommandButton Command="Save" Icon="save" ShowInEdit="true">Save</GridCommandButton>
+                <GridCommandButton Command="Cancel" Icon="cancel" ShowInEdit="true">Cancel</GridCommandButton>
 
+                <GridCommandButton Command="Detail" Icon="form-element" ShowInEdit="false" OnClick="@Detail">Detail</GridCommandButton>
+            </GridCommandColumn>
 
-                        <GridColumn Field=@nameof(StudentDto.Salutation) Title="Salutation" Width="50px">
-                            <EditorTemplate>
-                                @{
-                                    StudentToEdit = context as StudentDto;
-
-                                    <TelerikDropDownList Data="@salutations" @bind-Value="@StudentToEdit.SalutationId"
-                                                         Width="170px"
-                                                         TextField="Salutation1"
-                                                         ValueField="SalutationId">
-                                    </TelerikDropDownList>
-                                }
-                            </EditorTemplate>
-                        </GridColumn>
-
-                        <GridColumn Field="@(nameof(StudentDto.FirstName))" Width="100px" Editable="true" Visible="true" Title="First Name" />
-                        <GridColumn Field="@(nameof(StudentDto.LastName))" Width="100px" Editable="true" Visible="true" Title="Last Name" />
-                        <GridColumn Field="@(nameof(StudentDto.StreetAddress))" Width="100px" Editable="true" Visible="true" Title="Street Address" />
-                        <GridColumn Field="@(nameof(StudentDto.Zip))" Width="75px" Editable="true" Visible="true" Title="Zip" />
-                        <GridColumn Field="@(nameof(StudentDto.Phone))" Width="75px" Editable="true" Visible="true" Title="Phone" />
-                        <GridColumn Field="@(nameof(StudentDto.Employer))" Width="75px" Editable="true" Visible="true" Title="Employer" />
-
-                        <GridColumn Field="@(nameof(StudentDto.RegistrationDate))" DisplayFormat="{0:MM/dd/yyyy}" Width="75px" Editable="true" Visible="true" Title="Registration Date" />
-
-                        <GridCommandColumn Width="250px">
-                            <GridCommandButton Command="Edit" Icon="edit">Edit</GridCommandButton>
-                            <GridCommandButton Command="Delete" Icon="delete">Delete</GridCommandButton>
-                            <GridCommandButton Command="Save" Icon="save" ShowInEdit="true">Save</GridCommandButton>
-                            <GridCommandButton Command="Cancel" Icon="cancel" ShowInEdit="true">Cancel</GridCommandButton>
-
-                            <GridCommandButton Command="Detail" Icon="form-element" ShowInEdit="false" OnClick="@Detail">Detail</GridCommandButton>
-                        </GridCommandColumn>
-
-                    </GridColumns>
-                </TelerikGrid>
-            </SplitterPane>
-        </SplitterPanes>
-    </TelerikSplitter>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        </GridColumns>
+    </TelerikGrid>
  
+
+    <TelerikStepper @bind-Value="@CurrentStepIndex">
+        <StepperSteps>
+            <StepperStep Icon="cart" Label="Cart"></StepperStep>
+            <StepperStep Icon="marker-pin-target" Label="Delivery Address"></StepperStep>
+            <StepperStep Icon="dollar" Label="Payment Method"></StepperStep>
+            <StepperStep Icon="preview" Label="Preview" Optional="true"></StepperStep>
+            <StepperStep Icon="track-changes-accept" Label="Finish Order"></StepperStep>
+        </StepperSteps>
+    </TelerikStepper>
+
+    @code {
+        public int CurrentStepIndex { get; set; } = 4;
+    }
+    @*<TelerikSplitter Width="1200px"
+                         Height="800px"
+                         Orientation="@SplitterOrientation.Horizontal">
+            <SplitterPanes>
+                <SplitterPane Class="k-pane-flex" Size="20%" Min="20%" Max="40%" Collapsible="false">
+
+                </SplitterPane>
+
+                <SplitterPane Min="60%">
+
+                </SplitterPane>
+            </SplitterPanes>
+        </TelerikSplitter>*@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </div>

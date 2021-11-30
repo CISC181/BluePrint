@@ -31,6 +31,36 @@ namespace BluePrint.Server.Controllers
             this._mapper = mapper;
         }
 
+        [HttpDelete("{stuID}")]
+        public async Task<IActionResult> Delete(int stuID)
+        {
+            var stu = new Student { StudentId =  stuID };
+            _context.Remove(stu);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Post(StudentDto speaker)
+        {
+            var trans = _context.Database.BeginTransaction();
+            try
+            {
+                Student stu = new Student();
+                _context.Entry(stu).CurrentValues.SetValues(speaker);
+                await _context.AddAsync(stu);
+                await _context.SaveChangesAsync();
+                await trans.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                trans.Rollback();
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            return NoContent();
+
+        }
         [HttpPut]
         public async Task<IActionResult> Put(StudentDto speaker)
         {
@@ -40,6 +70,7 @@ namespace BluePrint.Server.Controllers
                 var sdnt = await _context.Students.SingleAsync(s => s.StudentId == speaker.StudentId);
                 _context.Entry(sdnt).CurrentValues.SetValues(speaker);
                 await _context.SaveChangesAsync();
+                await trans.CommitAsync();
             }
             catch (Exception ex)
             {
@@ -48,16 +79,6 @@ namespace BluePrint.Server.Controllers
             }
             return NoContent();
         }
-
-        //[HttpPut]
-        //public async Task<IActionResult> Post([FromBody] StudentDto stu)
-        //{
-        //    Student student = _context.Students.Where(x => x.StudentId == stu.StudentId).FirstOrDefault();
-        //    _context.Entry(student).CurrentValues.SetValues(stu);
-        //    _context.SaveChanges();
-
-        //    return NoContent();
-        //}
 
         [HttpGet]
         [Route("salutations")]

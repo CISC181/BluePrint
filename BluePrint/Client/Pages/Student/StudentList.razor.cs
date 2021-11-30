@@ -16,7 +16,11 @@ namespace BluePrint.Client.Pages.Student
 {
     public partial class StudentList : ComponentBase
     {
-
+        JsonSerializerOptions options = new JsonSerializerOptions()
+        {
+            ReferenceHandler = ReferenceHandler.Preserve,
+            PropertyNameCaseInsensitive = true
+        };
         [Inject]
         protected HttpClient Http { get; set; }
 
@@ -107,31 +111,27 @@ namespace BluePrint.Client.Pages.Student
         private async Task CreateItem(GridCommandEventArgs e)
         {
            StudentDto stu = e.Item as StudentDto;
-            await Http.PostAsJsonAsync("api/student", stu);
-
-            await GetStudents();
-        }
-
-        private async Task UpdateItem(GridCommandEventArgs e)
-        {
-            StudentDto stu = e.Item as StudentDto;
             var options = new JsonSerializerOptions()
             {
                 ReferenceHandler = ReferenceHandler.Preserve,
                 PropertyNameCaseInsensitive = true
             };
+            await Http.PostAsJsonAsync("api/student", stu,options);
 
-            await Http.PutAsJsonAsync($"api/student", stu, options);
+        }
 
-            //await GetStudents();
+        private async Task UpdateItem(GridCommandEventArgs e)
+        {
+            StudentDto stu = e.Item as StudentDto;
+            var response = await Http.PutAsJsonAsync($"api/student", stu, options);
+
         }
 
         private async Task DeleteItem(GridCommandEventArgs e)
         {
             StudentDto stu = e.Item as StudentDto;
-            await Http.DeleteAsync($"api/stu/{stu.StudentId}");
+            await Http.DeleteAsync($"api/student/{stu.StudentId}");
 
-            await GetStudents();
         }
     }
 }
