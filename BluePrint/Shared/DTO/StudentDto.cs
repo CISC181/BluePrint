@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,10 @@ namespace BluePrint.Shared.DTO
     {
         public int StudentId { get; set; }
         public decimal? SalutationId { get; set; }
+        [Required]
         public string FirstName { get; set; }
+
+        [StringLength(8)]
         public string LastName { get; set; }
         public string StreetAddress { get; set; }
         public string Zip { get; set; }

@@ -9,6 +9,8 @@ using System.Linq;
 using BluePrint.Server;
 using BluePrint.EF;
 using Microsoft.EntityFrameworkCore;
+using Okta.AspNetCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace BluePrint.Server
 {
@@ -41,7 +43,20 @@ namespace BluePrint.Server
                     options => options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve
                 );
 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = OktaDefaults.ApiAuthenticationScheme;
+                options.DefaultChallengeScheme = OktaDefaults.ApiAuthenticationScheme;
+                options.DefaultSignInScheme = OktaDefaults.ApiAuthenticationScheme;
+            })
+                .AddOktaWebApi(new OktaWebApiOptions()
+            {
+                OktaDomain = Configuration["Okta:OktaDomain"]
+            });
 
+            services.AddDefaultIdentity<IdentityUser>()
+                     .AddRoles<IdentityRole>()
+                     .AddEntityFrameworkStores<BluePrintOracleContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

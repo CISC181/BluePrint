@@ -43,13 +43,21 @@ namespace BluePrint.UT.UT
         [TestMethod]
         public void GetStudents()
         {
+            //ICollection<Student> students = _context.Students  
+            //    .Where(b => b.StudentId == 147)
+            //    .ToList();
+
             ICollection<Student> students = _context.Students
+                .Include(b => b.ZipNavigation)
                 .Include(b => b.Enrollments)
-                .ThenInclude(b => b.Grades)
+                    .ThenInclude(b => b.Grades)
                 .Where(b => b.StudentId == 147)
                 .ToList();
 
             var Grade = students.FirstOrDefault();
+            var zip = students.FirstOrDefault().ZipNavigation.State;
+
+           var state =  Grade.ZipNavigation.State;
 
             Grade.FirstName = "Joe";
             

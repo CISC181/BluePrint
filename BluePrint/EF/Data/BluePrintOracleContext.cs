@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using BluePrint.Shared.Models;
+using Microsoft.AspNetCore.Identity;
 
 #nullable disable
 
@@ -18,6 +19,13 @@ namespace BluePrint.EF
         {
         }
 
+        public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
+        public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
+        public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+        public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
+        public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
+        public virtual DbSet<AspNetUserRole> AspNetUserRoles { get; set; }
+        public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; }
         public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<Enrollment> Enrollments { get; set; }
         public virtual DbSet<Grade> Grades { get; set; }
@@ -25,15 +33,58 @@ namespace BluePrint.EF
         public virtual DbSet<GradeType> GradeTypes { get; set; }
         public virtual DbSet<GradeTypeWeight> GradeTypeWeights { get; set; }
         public virtual DbSet<Instructor> Instructors { get; set; }
+        public virtual DbSet<Person> People { get; set; }
         public virtual DbSet<Salutation> Salutations { get; set; }
         public virtual DbSet<Section> Sections { get; set; }
         public virtual DbSet<Student> Students { get; set; }
+        public virtual DbSet<Table1> Table1s { get; set; }
         public virtual DbSet<Zipcode> Zipcodes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.HasDefaultSchema("STU")
                 .HasAnnotation("Relational:Collation", "USING_NLS_COMP");
+
+            modelBuilder.Entity<AspNetRoleClaim>(entity =>
+            {
+                entity.Property(e => e.Id).HasPrecision(10);
+            });
+
+            modelBuilder.Entity<AspNetUser>(entity =>
+            {
+                entity.Property(e => e.AccessFailedCount).HasPrecision(10);
+
+                entity.Property(e => e.EmailConfirmed).HasPrecision(1);
+
+                entity.Property(e => e.LockoutEnabled).HasPrecision(1);
+
+                entity.Property(e => e.LockoutEnd).HasPrecision(7);
+
+                entity.Property(e => e.PhoneNumberConfirmed).HasPrecision(1);
+
+                entity.Property(e => e.TwoFactorEnabled).HasPrecision(1);
+            });
+
+            modelBuilder.Entity<AspNetUserClaim>(entity =>
+            {
+                entity.Property(e => e.Id).HasPrecision(10);
+            });
+
+            modelBuilder.Entity<AspNetUserLogin>(entity =>
+            {
+                entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
+            });
+
+            modelBuilder.Entity<AspNetUserRole>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.RoleId });
+            });
+
+            modelBuilder.Entity<AspNetUserToken>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+            });
 
             modelBuilder.Entity<Course>(entity =>
             {
@@ -272,6 +323,13 @@ namespace BluePrint.EF
                     .HasConstraintName("INST_ZIP_FK");
             });
 
+            modelBuilder.Entity<Person>(entity =>
+            {
+                entity.Property(e => e.PersonFirstName).IsUnicode(false);
+
+                entity.Property(e => e.PersonLastName).IsUnicode(false);
+            });
+
             modelBuilder.Entity<Salutation>(entity =>
             {
                 entity.Property(e => e.SalutationId).ValueGeneratedOnAdd();
@@ -322,7 +380,9 @@ namespace BluePrint.EF
             {
                 entity.Property(e => e.StudentId).HasPrecision(8);
 
-                entity.Property(e => e.CreatedBy).IsUnicode(false);
+                entity.Property(e => e.CreatedBy)
+                    .IsUnicode(false)
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.CreatedDate).ValueGeneratedOnAdd();
 
@@ -340,8 +400,6 @@ namespace BluePrint.EF
 
                 entity.Property(e => e.Phone).IsUnicode(false);
 
-                entity.Property(e => e.SalutationId).ValueGeneratedOnAdd();
-
                 entity.Property(e => e.StreetAddress).IsUnicode(false);
 
                 entity.Property(e => e.Zip).IsUnicode(false);
@@ -356,6 +414,22 @@ namespace BluePrint.EF
                     .HasForeignKey(d => d.Zip)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("STU_ZIP_FK");
+            });
+
+            modelBuilder.Entity<Table1>(entity =>
+            {
+                entity.HasKey(e => e.Column1)
+                    .HasName("TABLE1_PK");
+
+                entity.Property(e => e.Column1).IsUnicode(false);
+
+                entity.Property(e => e.Column2).IsUnicode(false);
+
+                entity.Property(e => e.Column3).IsUnicode(false);
+
+                entity.Property(e => e.Column4).IsUnicode(false);
+
+                entity.Property(e => e.Column5).IsUnicode(false);
             });
 
             modelBuilder.Entity<Zipcode>(entity =>
@@ -391,6 +465,7 @@ namespace BluePrint.EF
             modelBuilder.HasSequence("SEQ_SALUTATION");
 
             modelBuilder.HasSequence("STUDENT_ID_SEQ");
+       
 
             OnModelCreatingPartial(modelBuilder);
         }

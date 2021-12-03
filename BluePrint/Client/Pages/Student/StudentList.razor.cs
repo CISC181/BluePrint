@@ -48,6 +48,8 @@ namespace BluePrint.Client.Pages.Student
             await GetSalutations();
             await base.OnInitializedAsync();
 
+            
+
         }
         public class WindowDimension
         {

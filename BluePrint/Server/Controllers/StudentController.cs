@@ -94,11 +94,13 @@ namespace BluePrint.Server.Controllers
         {
             DataEnvelope<StudentDto> dataToReturn = null;
 
-            //ICollection<Student> studentsEF = await _context.Students.Include(x => x.Salutation).ToListAsync();
-            
-            //var speakerDTO = _mapper.Map<StudentDto>(studentsEF);
+            ICollection<Student> studentsEF = await _context.Students.Include(x => x.Salutation).ToListAsync();
 
-            ICollection<StudentDto> students = await _context.Students.Include(x=>x.Salutation)
+            // ICollection<StudentDto> students = _mapper.Map<List<StudentDto>>(studentsEF);
+
+
+
+            ICollection<StudentDto> students = await _context.Students.Include(x => x.Salutation)
                 .Select(sp => new StudentDto
                 {
                     StudentId = sp.StudentId,
@@ -116,6 +118,8 @@ namespace BluePrint.Server.Controllers
                     StreetAddress = sp.StreetAddress,
                     Zip = sp.Zip
                 }).ToListAsync();
+
+
             DataSourceResult processedData = await students.ToDataSourceResultAsync(gridRequest);
 
             if (gridRequest.Groups.Count > 0)

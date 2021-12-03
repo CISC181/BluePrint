@@ -3,5 +3,13 @@
 }
 
 .k-grid {
-    font-size: .9rem;
+    font-size: .75rem;
+}
+
+    .k-grid th, .k-grid td {
+        padding: 0.1rem 0.1rem;
+    }
+.k-button {
+    padding: 0.1rem 0.5rem;
+    gap: 0.5rem;
 }
