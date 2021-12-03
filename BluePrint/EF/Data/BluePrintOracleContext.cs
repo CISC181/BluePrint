@@ -42,6 +42,7 @@ namespace BluePrint.EF
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
 
             modelBuilder.HasDefaultSchema("STU")
                 .HasAnnotation("Relational:Collation", "USING_NLS_COMP");
@@ -465,7 +466,7 @@ namespace BluePrint.EF
             modelBuilder.HasSequence("SEQ_SALUTATION");
 
             modelBuilder.HasSequence("STUDENT_ID_SEQ");
-       
+
 
             OnModelCreatingPartial(modelBuilder);
         }
