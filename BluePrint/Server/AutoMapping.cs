@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BluePrint.Shared.DTO;
 using BluePrint.Shared.Models;
+using BluePrint.Server.Areas.Identity.CustomProvider;
 
 namespace BluePrint.Server
 {
@@ -12,6 +13,9 @@ namespace BluePrint.Server
     {
         public AutoMapping()
         {
+            CreateMap<AspNetUser, ApplicationUser>();
+            CreateMap<ApplicationUser, AspNetUser>();
+
             CreateMap<Student, StudentDto>();
             CreateMap<StudentDto, Student>();
         }

@@ -20,6 +20,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using System.IdentityModel.Tokens.Jwt;
+using BluePrint.Server.Areas.Identity.CustomProvider;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace BluePrint.Server
 {
@@ -52,24 +54,121 @@ namespace BluePrint.Server
                     options => options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve
                 );
 
-            services.AddAuthentication(options =>
+            //  Old way of doing auth
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = OktaDefaults.ApiAuthenticationScheme;
+            //    options.DefaultChallengeScheme = OktaDefaults.ApiAuthenticationScheme;
+            //    options.DefaultSignInScheme = OktaDefaults.ApiAuthenticationScheme;
+            //})
+            //    .AddOktaWebApi(new OktaWebApiOptions()
+            //    {
+            //        OktaDomain = Configuration["Okta:OktaDomain"]
+            //    });
+
+            //      https://www.syncfusion.com/faq/blazo/general/how-do-i-implement-blazor-authentication-with-openid-connect
+            services.AddAuthentication(opt =>
             {
-                options.DefaultAuthenticateScheme = OktaDefaults.ApiAuthenticationScheme;
-                options.DefaultChallengeScheme = OktaDefaults.ApiAuthenticationScheme;
-                options.DefaultSignInScheme = OktaDefaults.ApiAuthenticationScheme;
-            })
-                .AddOktaWebApi(new OktaWebApiOptions()
+                opt.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+
+                //opt.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                //opt.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                //opt.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            }).AddCookie().AddOpenIdConnect("oidc", options =>
+            {
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+                options.Authority   = Configuration.GetValue<string>("Okta:OktaDomain");
+                options.RequireHttpsMetadata = true;
+                options.ClientId = Configuration.GetValue<string>("Okta:ClientId");
+                options.ClientSecret = Configuration.GetValue<string>("Okta:ClientSecret");
+                options.ResponseType = OpenIdConnectResponseType.Code;
+                options.SaveTokens = true;
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.UseTokenLifetime = false;
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+                options.Scope.Add("email");
+
+                //options.TokenValidationParameters = new TokenValidationParameters { NameClaimType = "name" };
+
+                options.CorrelationCookie.SameSite = SameSiteMode.Unspecified;
+                options.NonceCookie.SameSite = SameSiteMode.Unspecified;
+
+
+                options.Events = new OpenIdConnectEvents
                 {
-                    OktaDomain = Configuration["Okta:OktaDomain"]
-                });
+                    // OnRedirectToIdentityProvider handler is needed so that we properly route the user
+                    // through our "ExternalLogin" logic, which will sign them in and redirect them to the
+                    // requested page.
+                    OnRedirectToIdentityProvider = context =>
+                    {
+                        string uri = context.Properties.RedirectUri;
+                        if (!uri.Contains("ExternalLogin"))
+                        {
+                            context.Properties.RedirectUri = $"/Identity/Account/ExternalLogin?returnUrl={context.Properties.RedirectUri}&handler=Callback";
+                            context.Properties.Items.Add("LoginProvider", "OpenIdConnect");
+                            context.Properties.IsPersistent = true;
+                        }
+                        return Task.CompletedTask;
+                    },
+
+                    // OnTokenValidated is not needed for anything, but is good informational stuff
+                    OnTokenValidated = context =>
+                    {
+                        var uri = context.Properties.RedirectUri;
+
+                        var http = context.HttpContext;
+                        var idToken = context.SecurityToken;
+                        string userIdentifier = idToken.Subject;
+                        string userEmail =
+                            idToken.Claims.SingleOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value
+                            ?? idToken.Claims.SingleOrDefault(c => c.Type == "preferred_username")?.Value;
+
+                        string firstName = idToken.Claims.SingleOrDefault(c => c.Type == JwtRegisteredClaimNames.GivenName)?.Value;
+                        string lastName = idToken.Claims.SingleOrDefault(c => c.Type == JwtRegisteredClaimNames.FamilyName)?.Value;
+                        string name = idToken.Claims.SingleOrDefault(c => c.Type == "name")?.Value;
+
+                            // manage roles, modify token and claims etc.
+
+                            return Task.CompletedTask;
+                    },
+
+                    // TODO: update this handler
+                    OnAuthenticationFailed = context =>
+                    {
+                        context.Response.Redirect("/Home/Error");
+                        context.HandleResponse(); // Suppress the exception
+                            return Task.CompletedTask;
+                    },
+                };
 
 
 
+
+
+            });
+
+            //Vanilla
             services.AddDefaultIdentity<IdentityUser>()
                     .AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<BluePrintOracleContext>();
 
+            //// Add identity types
+            //services.AddIdentity<ApplicationUser, ApplicationRole>()
+            //    // .AddSignInManager<ApplicationSignInManager<ApplicationUser>>()
+            //    .AddRoleManager<ApplicationRoleManager<ApplicationRole>>()
+            //    .AddUserManager<ApplicationUserManager<ApplicationUser>>()
+            //    .AddDefaultTokenProviders();
 
+            // Identity Services
+            services.AddTransient<IUserStore<ApplicationUser>, AspNetUserStore>();
+            services.AddTransient<IRoleStore<ApplicationRole>, AspNetRoleStore>();
+
+            services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+
+            //services.AddSingleton<AspNetUserStore>();
+            //services.AddSingleton<AspNetRoleStore>();
 
 
             //services.AddAuthentication(options =>

@@ -38,7 +38,6 @@ namespace BluePrint.Client.Pages.Student
 
         public StudentDto StudentToEdit { get; set; }
 
-        //private SPARC.Shared.Models.Prjct CurrentlyEditedProject { get; set; }
         private bool IsLoading { get; set; }
         public int Total { get; set; } = 0;
         private bool ExportAllPages { get; set; }
@@ -47,9 +46,6 @@ namespace BluePrint.Client.Pages.Student
         {
             await GetSalutations();
             await base.OnInitializedAsync();
-
-            
-
         }
         public class WindowDimension
         {

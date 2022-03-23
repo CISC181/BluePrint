@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Principal;
 using Microsoft.EntityFrameworkCore;
 
 #nullable disable
@@ -49,5 +50,6 @@ namespace BluePrint.Shared.Models
         public virtual ICollection<AspNetUserRole> AspNetUserRoles { get; set; }
         [InverseProperty(nameof(AspNetUserToken.User))]
         public virtual ICollection<AspNetUserToken> AspNetUserTokens { get; set; }
+
     }
 }

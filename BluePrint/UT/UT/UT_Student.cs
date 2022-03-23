@@ -47,6 +47,8 @@ namespace BluePrint.UT.UT
             //    .Where(b => b.StudentId == 147)
             //    .ToList();
 
+            ICollection<Student> stu = _context.Students.Where(x => x.StudentId == 147).ToList();
+
             ICollection<Student> students = _context.Students
                 .Include(b => b.ZipNavigation)
                 .Include(b => b.Enrollments)

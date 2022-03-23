@@ -5,11 +5,14 @@
 @attribute [Authorize]
 <h3>Students</h3>
 
-@*<div style="position: relative; width:100%; min-height: 600px;">*@
 <div style="position: relative; width:100%; min-height: 600px;">
     <AuthorizeView>
         <Authorized>
             <h3>Profile</h3>
+            @context.User.Identity.Name
+
+
+           
 
             <table class="table">
                 <thead>

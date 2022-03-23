@@ -12,6 +12,7 @@ namespace BluePrint.EF
     {
         public BluePrintOracleContext()
         {
+
         }
 
         public BluePrintOracleContext(DbContextOptions<BluePrintOracleContext> options)
@@ -39,6 +40,7 @@ namespace BluePrint.EF
         public virtual DbSet<Student> Students { get; set; }
         public virtual DbSet<Table1> Table1s { get; set; }
         public virtual DbSet<Zipcode> Zipcodes { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

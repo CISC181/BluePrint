@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
 using BluePrint.Client.AuthProviders;
+using Microsoft.Extensions.Logging;
 
 namespace BluePrint.Client
 {
@@ -19,11 +20,13 @@ namespace BluePrint.Client
           //  await DebugDelayAsync();
 
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            //builder.Logging.SetMinimumLevel(LogLevel.Debug);
+
             builder.RootComponents.Add<App>("#app");
 
-            builder.Services.AddHttpClient("BluePrint.ServerAPI", client =>
-            client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-            .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+                builder.Services.AddHttpClient("BluePrint.ServerAPI", client =>
+                client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+                .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
@@ -33,6 +36,7 @@ namespace BluePrint.Client
                 options.ProviderOptions.Authority = builder.Configuration.GetValue<string>("Okta:Authority");
                 options.ProviderOptions.ClientId = builder.Configuration.GetValue<string>("Okta:ClientId");
                 options.ProviderOptions.ResponseType = "code";
+                //options.ProviderOptions.RedirectUri = $"/Identity/Account/ExternalLogin?returnUrl={options.ProviderOptions.RedirectUri}&handler=Callback";
             });
 
             builder.Services.AddScoped<StudentService>();
@@ -61,4 +65,5 @@ namespace BluePrint.Client
         //    await builder.Build().RunAsync();
         //}
     }
+
 }

@@ -15,10 +15,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.12">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
     <PackageReference Include="Okta.AspNetCore" Version="3.5.1" />
     <PackageReference Include="Telerik.DataSource" Version="2.1.0" />
     <PackageReference Include="Telerik.UI.for.Blazor" Version="2.29.0" />
@@ -28,6 +30,10 @@
     <ProjectReference Include="..\Client\BluePrint.Client.csproj" />
     <ProjectReference Include="..\EF\BluePrint.EF.csproj" />
     <ProjectReference Include="..\Shared\BluePrint.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Area\Identity\Account\" />
   </ItemGroup>
 
 
